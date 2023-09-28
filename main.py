@@ -1,36 +1,25 @@
 from aiogram import Bot, Dispatcher
-from aiogram.types import Message
+from core.settings import settings
 import asyncio
 import logging
-
-token = "5814709387:AAGHLO4Pv-T8gT6Y_fwdBYnxb7mEraV150o"
+from core.handlers.basic import get_start
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
-    await bot.send_message(979871718, text="Бот стартував")
+    await bot.send_message(settings.bots.admin_id, text="Бот стартував")
 
 
-async def stop_bot(bot: Bot):  
-    await bot.send_message(979871718, text="Бот зупинено")
-
-
-async def get_start(message: Message, bot: Bot):
-    await bot.send_message(
-        message.from_user.id,
-        f"<b>Привіт {message.from_user.first_name}. Радий тебе бачити</b>",
-    )
-    await message.answer(f"<s>Привіт {message.from_user.first_name}</s>")
-    await message.reply(
-        f"<tg-spoiler>Привіт {message.from_user.first_name}</tg-spoiler>"
-    )  # цитируют сообщение пользователя
+async def stop_bot(bot: Bot):
+    await bot.send_message(settings.bots.admin_id, text="Бот зупинено")
 
 
 async def start():  # кнопка старт
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s - [%(levelname)s] - %(name)s -"
-                        "(%(filename)s).%(funcName)s(%(lineno)d) - %(message)s"
-                        )
-    bot = Bot(token=token, parse_mode='HTML')
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - [%(levelname)s] - %(name)s -"
+        "(%(filename)s).%(funcName)s(%(lineno)d) - %(message)s",
+    )
+    bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
     dp = Dispatcher()
     dp.startup.register(start_bot)
