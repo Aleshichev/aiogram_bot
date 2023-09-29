@@ -9,6 +9,7 @@ from core.handlers.contact import get_fake_contact, get_true_contact
 from aiogram import F
 from aiogram.filters import CommandStart, Command
 from core.utils.commands import set_commands
+from core.handlers.callback import select_macbook
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -34,7 +35,7 @@ async def start():  # кнопка старт
     dp.message.register(get_inline, Command(commands='inline'))
     dp.message.register(get_photo, F.photo)
     dp.message.register(get_hello, F.text == "Привіт")
-
+    dp.callback_query.register(select_macbook, F.data.startswith('apple_'))  # запускается если колбек дата начинается с apple
     dp.message.register(get_location, F.location)
 
     dp.message.register(get_true_contact, F.contact, IsTrueContact())

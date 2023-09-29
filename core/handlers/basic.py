@@ -6,13 +6,13 @@ from core.keyboards.reply import (
     loc_tel_poll_keyboard,
     get_reply_keyboard,
 )
-from core.keyboards.inline import select_macbook
+from core.keyboards.inline import select_macbook, get_inline_keyboard
 
 
 async def get_inline(message: Message, bot: Bot):
     await message.answer(
         f"Привіт, {message.from_user.first_name}.Показую інлайн кнопки",
-        reply_markup=select_macbook,
+        reply_markup=get_inline_keyboard(),  # reply_markup=select_macbook,
     )
 
 
