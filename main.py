@@ -4,8 +4,11 @@ from aiogram.types import ContentType
 import asyncio
 import logging
 from core.handlers.basic import get_start, get_photo, get_hello
+from core.filters.iscontact import IsTrueContact
+from core.handlers.contact import get_fake_contact, get_true_contact
 from aiogram import F
 from aiogram.filters import CommandStart, Command
+
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -28,7 +31,25 @@ async def start():  # кнопка старт
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
     dp.message.register(get_photo, F.photo)
-    dp.message.register(get_hello, F.text == 'Привіт')
+    dp.message.register(get_hello, F.text == "Привіт")
+
+    # dp.message.register(
+    #     get_true_contact,
+    #     ContentTypesFilter(content_types=[ContentType.CONTACT]),
+    #     IsTrueContact(),
+    # )
+
+    # dp.message.register(
+    #     get_fake_contact,
+    #     ContentTypesFilter(content_types=[ContentType.CONTACT])
+    # )
+
+    dp.message.register(
+        get_true_contact, F.contact, IsTrueContact())
+    
+    dp.message.register(
+        get_fake_contact, F.contact)
+    
 
     dp.message.register(get_start, Command(commands=["start", "run"]))
     # dp.message.register(get_start, CommandStart)
