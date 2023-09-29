@@ -1,7 +1,19 @@
 from aiogram import Bot
 from aiogram.types import Message
 import json
-from core.keyboards.reply import reply_keyboard, loc_tel_poll_keyboard
+from core.keyboards.reply import (
+    reply_keyboard,
+    loc_tel_poll_keyboard,
+    get_reply_keyboard,
+)
+from core.keyboards.inline import select_macbook
+
+
+async def get_inline(message: Message, bot: Bot):
+    await message.answer(
+        f"Привіт, {message.from_user.first_name}.Показую інлайн кнопки",
+        reply_markup=select_macbook,
+    )
 
 
 async def get_start(message: Message, bot: Bot):
@@ -11,8 +23,8 @@ async def get_start(message: Message, bot: Bot):
     # )
     await message.answer(
         f"<s>Привіт {message.from_user.first_name}</s>",
-        reply_markup=loc_tel_poll_keyboard,
-    )  # reply_markup=reply_keyboard
+        reply_markup=get_reply_keyboard(),
+    )  # reply_markup=reply_keyboard   , loc_tel_poll_keyboard
     # await message.reply(
     #     f"<tg-spoiler>Привіт {message.from_user.first_name}</tg-spoiler>"
     # )  # цитируют сообщение пользователя

@@ -1,4 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, KeyboardButtonPollType
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 reply_keyboard = ReplyKeyboardMarkup(
     keyboard=[
@@ -40,3 +41,23 @@ loc_tel_poll_keyboard = ReplyKeyboardMarkup(
     input_field_placeholder="Відправ локацію/ номер телефону/або створи вікторину-опрос",
     selective=True,
 )
+
+
+def get_reply_keyboard():
+    keyboard_builder = ReplyKeyboardBuilder()
+
+    keyboard_builder.button(text="Button 1")
+    keyboard_builder.button(text="Button 2")
+    keyboard_builder.button(text="Button 3")
+    keyboard_builder.button(text="Відправити геолокацію", request_location=True)
+    keyboard_builder.button(text="Відправити свій контакт", request_contact=True)
+    keyboard_builder.button(
+        text="Створити вікторину", request_poll=KeyboardButtonPollType()
+    )
+    keyboard_builder.adjust(3, 2, 1)
+    return keyboard_builder.as_markup(
+        resize_keyboard=True,
+        one_time_keyboard=False,
+        input_field_placeholder="Відправ локацію/ номер телефону/або створи вікторину-опрос",
+        selective=True,
+    )

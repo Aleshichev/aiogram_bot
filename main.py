@@ -3,7 +3,7 @@ from core.settings import settings
 from aiogram.types import ContentType
 import asyncio
 import logging
-from core.handlers.basic import get_start, get_photo, get_hello, get_location
+from core.handlers.basic import get_start, get_photo, get_hello, get_location, get_inline
 from core.filters.iscontact import IsTrueContact
 from core.handlers.contact import get_fake_contact, get_true_contact
 from aiogram import F
@@ -31,6 +31,7 @@ async def start():  # кнопка старт
     dp = Dispatcher()
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+    dp.message.register(get_inline, Command(commands='inline'))
     dp.message.register(get_photo, F.photo)
     dp.message.register(get_hello, F.text == "Привіт")
 

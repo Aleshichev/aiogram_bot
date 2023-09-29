@@ -7,6 +7,8 @@ async def set_commands(bot: Bot):
         BotCommand(command="start", description="Початок роботи"),
         BotCommand(command="help", description="Допомога"),
         BotCommand(command="cancel", description="Сбросити"),
+        BotCommand(command="inline", description="Інлайн клавіатура"),
+
     ]
 
     await bot.set_my_commands(commands, BotCommandScopeDefault())
