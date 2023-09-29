@@ -8,10 +8,11 @@ from core.filters.iscontact import IsTrueContact
 from core.handlers.contact import get_fake_contact, get_true_contact
 from aiogram import F
 from aiogram.filters import CommandStart, Command
-
+from core.utils.commands import set_commands
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
+    await set_commands(bot)
     await bot.send_message(settings.bots.admin_id, text="Бот стартував")
 
 
