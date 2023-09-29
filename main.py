@@ -3,13 +3,20 @@ from core.settings import settings
 from aiogram.types import ContentType
 import asyncio
 import logging
-from core.handlers.basic import get_start, get_photo, get_hello, get_location, get_inline
+from core.handlers.basic import (
+    get_start,
+    get_photo,
+    get_hello,
+    get_location,
+    get_inline,
+)
 from core.filters.iscontact import IsTrueContact
 from core.handlers.contact import get_fake_contact, get_true_contact
 from aiogram import F
 from aiogram.filters import CommandStart, Command
 from core.utils.commands import set_commands
 from core.handlers.callback import select_macbook
+from core.utils.callbackdata import MacInfo
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -32,10 +39,13 @@ async def start():  # кнопка старт
     dp = Dispatcher()
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
-    dp.message.register(get_inline, Command(commands='inline'))
+    dp.message.register(get_inline, Command(commands="inline"))
     dp.message.register(get_photo, F.photo)
     dp.message.register(get_hello, F.text == "Привіт")
-    dp.callback_query.register(select_macbook, F.data.startswith('apple_'))  # запускается если колбек дата начинается с apple
+    dp.callback_query.register(
+        select_macbook, MacInfo.filter(F.model == "pro")
+    )  # запускается если колбек дата начинается с apple
+    # dp.callback_query.register(select_macbook, F.data.startswith('apple_'))  # запускается если колбек дата начинается с apple
     dp.message.register(get_location, F.location)
 
     dp.message.register(get_true_contact, F.contact, IsTrueContact())

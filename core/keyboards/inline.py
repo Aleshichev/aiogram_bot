@@ -1,5 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from core.utils.callbackdata import MacInfo
+
 
 select_macbook = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -27,15 +29,28 @@ select_macbook = InlineKeyboardMarkup(
 
 def get_inline_keyboard():
     keyboard_builder = InlineKeyboardBuilder()
+    # keyboard_builder.button(
+    #     text="Macbook Air 13 M1 2020", callback_data="apple_air_13_m1_2020"
+    # )
+    # keyboard_builder.button(
+    #     text="Macbook Air 14 M1 Pro 2021", callback_data="apple_pro_14_m1_2020"
+    # )
+    # keyboard_builder.button(
+    #     text="Apple MacBook Pro 16 M1 2019", callback_data="apple_pro_16_i7_2019"
+    # )
     keyboard_builder.button(
-        text="Macbook Air 13 M1 2020", callback_data="apple_air_13_m1_2020"
+        text="Macbook Air 13 M1 2020",
+        callback_data=MacInfo(model="air", size=13, chip="m1", year=2020),
     )
     keyboard_builder.button(
-        text="Macbook Air 14 M1 Pro 2021", callback_data="apple_pro_14_m1_2020"
+        text="Macbook Air 14 M1 Pro 2021",
+        callback_data=MacInfo(model="air", size=14, chip="m1", year=2021),
     )
     keyboard_builder.button(
-        text="Apple MacBook Pro 16 M1 2019", callback_data="apple_pro_16_i7_2019"
+        text="Apple MacBook Pro 16 M1 2019",
+        callback_data=MacInfo(model="pro", size=16, chip="m1", year=2019),
     )
+
     keyboard_builder.button(text="Link", url="http://google.com")
     keyboard_builder.button(text="Profile", url="tg://user?id=979871718")
 
