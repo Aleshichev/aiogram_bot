@@ -16,11 +16,12 @@ async def get_inline(message: Message, bot: Bot):
     )
 
 
-async def get_start(message: Message, bot: Bot):
+async def get_start(message: Message, bot: Bot, counter: str):
     # await bot.send_message(
     #     message.from_user.id,
     #     f"<b>Привіт {message.from_user.first_name}. Радий тебе бачити</b>",
     # )
+    await message.answer(f'Повідомлення #{counter}')
     await message.answer(
         f"<s>Привіт {message.from_user.first_name}</s>",
         reply_markup=get_reply_keyboard(),

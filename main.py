@@ -17,7 +17,14 @@ from aiogram.filters import CommandStart, Command
 from core.utils.commands import set_commands
 from core.handlers.callback import select_macbook
 from core.utils.callbackdata import MacInfo
-from core.handlers.pay import order, pre_checkout_query, successful_payment, shipping_check
+from core.handlers.pay import (
+    order,
+    pre_checkout_query,
+    successful_payment,
+    shipping_check,
+)
+from core.middlewares.countermiddleware import CounterMiddleware
+from core.middlewares.officehours import OfficeHoursMiddleware
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -38,6 +45,8 @@ async def start():  # кнопка старт
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
     dp = Dispatcher()
+    dp.message.middleware.register(CounterMiddleware())
+    dp.message.middleware.register(OfficeHoursMiddleware())
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
     dp.message.register(order, Command(commands="pay"))
