@@ -25,6 +25,8 @@ from core.handlers.pay import (
 )
 from core.middlewares.countermiddleware import CounterMiddleware
 from core.middlewares.officehours import OfficeHoursMiddleware
+from core.middlewares.dbmiddleware import DbSession
+import asyncpg
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -36,6 +38,17 @@ async def stop_bot(bot: Bot):
     await bot.send_message(settings.bots.admin_id, text="Бот зупинено")
 
 
+async def create_pool():
+    await asyncpg.create_pool(
+        user="postgres",
+        password="123",
+        database="users",
+        host="127.0.0.1",
+        port=5432,
+        command_timeout=60,
+    )
+
+
 async def start():  # кнопка старт
     logging.basicConfig(
         level=logging.INFO,
@@ -44,7 +57,9 @@ async def start():  # кнопка старт
     )
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
+    pool_connection = await create_pool()
     dp = Dispatcher()
+    dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())
     dp.message.middleware.register(OfficeHoursMiddleware())
     dp.startup.register(start_bot)
