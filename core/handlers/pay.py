@@ -1,5 +1,70 @@
 from aiogram import Bot
-from aiogram.types import Message, LabeledPrice, PreCheckoutQuery
+from aiogram.types import (
+    Message,
+    LabeledPrice,
+    PreCheckoutQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ShippingOption,
+    ShippingQuery,
+)
+
+
+keyboards = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Оплатить заказ", pay=True)],
+        [InlineKeyboardButton(text="LINK", url="www.google.com")],
+    ]
+)
+
+BY_SHIPPING = ShippingOption(
+    id="by",
+    title="Доставка в Білорусь",
+    prices=[LabeledPrice(label="Доставка Белпочтой", amount=500)],
+)
+
+PL_SHIPPING = ShippingOption(
+    id="pl",
+    title="Доставка до Польші",
+    prices=[LabeledPrice(label="Доставка поштой Польші", amount=1000)],
+)
+
+UA_SHIPPING = ShippingOption(
+    id="ua",
+    title="Доставка в Україну",
+    prices=[LabeledPrice(label="Доставка Укрпочтой", amount=1500)],
+)
+
+CITIES_SHIPPING = ShippingOption(
+    id="capitals",
+    title="Швидка доставка містом",
+    prices=[LabeledPrice(label="Доставка курьером Торетто", amount=2000)],
+)
+
+
+async def shipping_check(shipping_query: ShippingQuery, bot: Bot):
+    shipping_options = []
+    countries = ["BY", "PL", "UA"]
+    if shipping_query.shipping_address.country_code not in countries:
+        return await bot.answer_shipping_query(
+            shipping_query.id, ok=False, error_message="Нема доставки в вашу країну"
+        )
+    if shipping_query.shipping_address.country_code == "BY":
+        shipping_options.append(BY_SHIPPING)
+
+    if shipping_query.shipping_address.country_code == "PL":
+        shipping_options.append(PL_SHIPPING)
+
+    if shipping_query.shipping_address.country_code == "UA":
+        shipping_options.append(UA_SHIPPING)
+
+    cities = ["Київ", "Варшава", "Мінськ"]
+    if shipping_query.shipping_address.city in cities:
+        shipping_options.append(CITIES_SHIPPING)
+
+    await bot.answer_shipping_query(
+        shipping_query.id, ok=True, shipping_options=shipping_options
+    )
 
 
 async def order(message: Message, bot: Bot):
@@ -24,19 +89,19 @@ async def order(message: Message, bot: Bot):
         photo_size=100,
         photo_width=200,
         photo_height=50,
-        need_name=True,
-        need_phone_number=True,
+        need_name=False,
+        need_phone_number=False,
         need_shipping_address=False,
-        need_email=True,
+        need_email=False,
         send_phone_number_to_provider=False,
         send_email_to_provider=False,
-        is_flexible=False,  # если конечная цена завасит от способа доставки
+        is_flexible=True,  # если конечная цена завасит от способа доставки
         disable_notification=False,  # сообщение без звук
         protect_content=False,  # защитить пост
         reply_to_message_id=None,
         allow_sending_without_reply=True,  # счёт на оплату без цитированного сообщения
-        reply_markup=None,  # ещё клавиатура
-        request_timeout=30
+        reply_markup=keyboards,  # ещё клавиатура
+        request_timeout=30,
     )
 
 

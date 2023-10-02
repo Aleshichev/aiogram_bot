@@ -17,7 +17,7 @@ from aiogram.filters import CommandStart, Command
 from core.utils.commands import set_commands
 from core.handlers.callback import select_macbook
 from core.utils.callbackdata import MacInfo
-from core.handlers.pay import order, pre_checkout_query, successful_payment
+from core.handlers.pay import order, pre_checkout_query, successful_payment, shipping_check
 
 
 async def start_bot(bot: Bot):  # уведомляет админа о старте бота
@@ -42,6 +42,7 @@ async def start():  # кнопка старт
     dp.shutdown.register(stop_bot)
     dp.message.register(order, Command(commands="pay"))
     dp.pre_checkout_query.register(pre_checkout_query)
+    dp.shipping_query.register(shipping_check)
     dp.message.register(successful_payment, F.successful_payment)
     dp.message.register(get_inline, Command(commands="inline"))
     dp.message.register(get_photo, F.photo)
