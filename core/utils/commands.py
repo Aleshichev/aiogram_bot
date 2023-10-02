@@ -8,6 +8,8 @@ async def set_commands(bot: Bot):
         BotCommand(command="help", description="Допомога"),
         BotCommand(command="cancel", description="Сбросити"),
         BotCommand(command="inline", description="Інлайн клавіатура"),
+        BotCommand(command="pay", description="Купить продукт"),
+
 
     ]
 
