@@ -34,6 +34,11 @@ from datetime import datetime, timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from core.handlers import apshed
+
+from aiogram.fsm.storage.redis import RedisStorage
+from apscheduler.jobstores.redis import RedisJobStore
+
+from apscheduler_di import ContextSchedulerDecorator
 import asyncpg
 
 
@@ -66,37 +71,71 @@ async def start():  # кнопка старт
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
     pool_connection = await create_pool()
+    storage = RedisStorage.from_url("redis://localhost:6379/0")
+    dp = Dispatcher(storage=storage)
 
-    dp = Dispatcher()
-    
-    scheduler = AsyncIOScheduler(timezone="Europe/Kiev")
-    scheduler.add_job(
-        apshed.send_message_time,
-        trigger="date",
-        run_date=datetime.now() + timedelta(seconds=10),
-        args=(bot,),
-    )
+    jobstores = {
+        "default": RedisJobStore(
+            jobs_key="dispatched_trips_jobs",
+            run_times_key="dispatched_trips_running",
+            host="localhost",
+            db=2,
+            port=6379,
+        )
+    }
 
-    scheduler.add_job(
-        apshed.send_message_cron,
-        trigger="cron",
-        hour=datetime.now().hour,
-        minute=datetime.now().minute + 1,
-        start_date=datetime.now(),
-        args=(bot,),
+    scheduler = ContextSchedulerDecorator(
+        AsyncIOScheduler(timezone="Europe/Kiev", jobstores=jobstores)
     )
+    scheduler.ctx.add_instance(bot, declared_class=Bot)
+    # scheduler.add_job(
+    #     apshed.send_message_time,
+    #     trigger="date",
+    #     run_date=datetime.now() + timedelta(seconds=10),
+    #     args=(bot,),
+    # )
 
-    scheduler.add_job(
-        apshed.send_message_interval,
-        trigger="interval",
-        seconds=60,
-        args=(bot,),
-    )
+    # scheduler.add_job(
+    #     apshed.send_message_cron,
+    #     trigger="cron",
+    #     hour=datetime.now().hour,
+    #     minute=datetime.now().minute + 1,
+    #     start_date=datetime.now(),
+    #     args=(bot,),
+    # )
+
+    # scheduler.add_job(
+    #     apshed.send_message_interval,
+    #     trigger="interval",
+    #     seconds=60,
+    #     args=(bot,),
+    # )
+
+    # scheduler.add_job(
+    #     apshed.send_message_time,
+    #     trigger="date",
+    #     run_date=datetime.now() + timedelta(seconds=10),
+    # )
+
+    # scheduler.add_job(
+    #     apshed.send_message_cron,
+    #     trigger="cron",
+    #     hour=datetime.now().hour,
+    #     minute=datetime.now().minute + 1,
+    #     start_date=datetime.now(),
+    # )
+
+    # scheduler.add_job(
+    #     apshed.send_message_interval,
+    #     trigger="interval",
+    #     seconds=60,
+    # )
+
     scheduler.start()
 
     dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())
-    dp.update.middleware.register(OfficeHoursMiddleware())
+    dp.message.middleware.register(OfficeHoursMiddleware())
     dp.update.middleware.register(SchedulerMiddleware(scheduler))
 
     dp.startup.register(start_bot)

@@ -6,7 +6,7 @@ from typing import Dict, Any, Callable, Awaitable
 
 def office_hours() -> bool:
     return datetime.now().weekday() in (0, 1, 2, 3, 4) and datetime.now().hour in (
-        [i for i in (range(8, 19))]
+        [i for i in (range(0, 24))]
     )
 
 

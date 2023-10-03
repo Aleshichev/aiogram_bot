@@ -15,5 +15,6 @@ async def send_message_interval(bot: Bot):
     # выполняется c опред интервалом
     await bot.send_message(979871718, "message will send with interval 1 minute")
 
+
 async def send_message_middleware(bot: Bot, chat_id: int):
     await bot.send_message(chat_id, "message sent with middleware task")
