@@ -26,6 +26,8 @@ from core.handlers.pay import (
 from core.middlewares.countermiddleware import CounterMiddleware
 from core.middlewares.officehours import OfficeHoursMiddleware
 from core.middlewares.dbmiddleware import DbSession
+from core.middlewares.apschedmiddleware import SchedulerMiddleware
+
 from core.handlers import form
 from core.utils.statesform import StepsForm
 from datetime import datetime, timedelta
@@ -94,7 +96,9 @@ async def start():  # кнопка старт
 
     dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())
-    dp.message.middleware.register(OfficeHoursMiddleware())
+    dp.update.middleware.register(OfficeHoursMiddleware())
+    dp.update.middleware.register(SchedulerMiddleware(scheduler))
+
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
