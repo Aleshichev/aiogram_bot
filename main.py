@@ -26,6 +26,8 @@ from core.handlers.pay import (
 from core.middlewares.countermiddleware import CounterMiddleware
 from core.middlewares.officehours import OfficeHoursMiddleware
 from core.middlewares.dbmiddleware import DbSession
+from core.handlers import form
+from core.utils.statesform import StepsForm
 import asyncpg
 
 
@@ -49,7 +51,7 @@ async def create_pool():
     )
 
 
-async def start():       # кнопка старт
+async def start():  # кнопка старт
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - [%(levelname)s] - %(name)s -"
@@ -65,6 +67,12 @@ async def start():       # кнопка старт
     dp.message.middleware.register(OfficeHoursMiddleware())
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+
+    dp.message.register(form.get_form, Command(commands='form'))
+    dp.message.register(form.get_name, StepsForm.GET_NAME)
+    dp.message.register(form.get_last_name, StepsForm.GET_LAST_NAME)
+    dp.message.register(form.get_age, StepsForm.GET_AGE)
+
     dp.message.register(order, Command(commands="pay"))
     dp.pre_checkout_query.register(pre_checkout_query)
     dp.shipping_query.register(shipping_check)
