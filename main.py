@@ -39,7 +39,7 @@ async def stop_bot(bot: Bot):
 
 
 async def create_pool():
-    await asyncpg.create_pool(
+    return await asyncpg.create_pool(
         user="postgres",
         password="123",
         database="users",
@@ -49,7 +49,7 @@ async def create_pool():
     )
 
 
-async def start():  # кнопка старт
+async def start():       # кнопка старт
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - [%(levelname)s] - %(name)s -"
@@ -58,6 +58,7 @@ async def start():  # кнопка старт
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
     pool_connection = await create_pool()
+
     dp = Dispatcher()
     dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())

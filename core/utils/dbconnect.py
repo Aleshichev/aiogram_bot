@@ -6,6 +6,6 @@ class Request:
         self.connector = connector
 
     async def add_data(self, user_id, user_name):
-        query = f"INSERT INTO datausers (user_id, user_name) VALUES ({user_id}, {user_name}) ON CONFLICT (user_id) DO UPDATE SET user_name='{user_name}'"
+        query = f"INSERT INTO datausers (user_id, user_name) VALUES ({user_id}, '{user_name}') ON CONFLICT (user_id) DO UPDATE SET user_name='{user_name}'"
         print(query)
         await self.connector.execute(query)
