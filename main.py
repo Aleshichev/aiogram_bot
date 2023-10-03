@@ -28,6 +28,10 @@ from core.middlewares.officehours import OfficeHoursMiddleware
 from core.middlewares.dbmiddleware import DbSession
 from core.handlers import form
 from core.utils.statesform import StepsForm
+from datetime import datetime, timedelta
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from core.handlers import apshed
 import asyncpg
 
 
@@ -62,13 +66,39 @@ async def start():  # кнопка старт
     pool_connection = await create_pool()
 
     dp = Dispatcher()
+    
+    scheduler = AsyncIOScheduler(timezone="Europe/Kiev")
+    scheduler.add_job(
+        apshed.send_message_time,
+        trigger="date",
+        run_date=datetime.now() + timedelta(seconds=10),
+        args=(bot,),
+    )
+
+    scheduler.add_job(
+        apshed.send_message_cron,
+        trigger="cron",
+        hour=datetime.now().hour,
+        minute=datetime.now().minute + 1,
+        start_date=datetime.now(),
+        args=(bot,),
+    )
+
+    scheduler.add_job(
+        apshed.send_message_interval,
+        trigger="interval",
+        seconds=60,
+        args=(bot,),
+    )
+    scheduler.start()
+
     dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())
     dp.message.middleware.register(OfficeHoursMiddleware())
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
-    dp.message.register(form.get_form, Command(commands='form'))
+    dp.message.register(form.get_form, Command(commands="form"))
     dp.message.register(form.get_name, StepsForm.GET_NAME)
     dp.message.register(form.get_last_name, StepsForm.GET_LAST_NAME)
     dp.message.register(form.get_age, StepsForm.GET_AGE)
