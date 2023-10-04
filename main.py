@@ -28,7 +28,7 @@ from core.middlewares.officehours import OfficeHoursMiddleware
 from core.middlewares.dbmiddleware import DbSession
 from core.middlewares.apschedmiddleware import SchedulerMiddleware
 
-from core.handlers import form
+from core.handlers import form, sendmedia
 from core.utils.statesform import StepsForm
 from datetime import datetime, timedelta
 
@@ -39,6 +39,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from apscheduler.jobstores.redis import RedisJobStore
 
 from apscheduler_di import ContextSchedulerDecorator
+
 import asyncpg
 
 
@@ -131,7 +132,7 @@ async def start():  # кнопка старт
     #     seconds=60,
     # )
 
-    scheduler.start()
+    # scheduler.start()
 
     dp.update.middleware.register(DbSession(pool_connection))
     dp.message.middleware.register(CounterMiddleware())
@@ -140,6 +141,15 @@ async def start():  # кнопка старт
 
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+
+    dp.message.register(sendmedia.get_audio, Command(commands="audio"))
+    dp.message.register(sendmedia.get_document, Command(commands="document"))
+    dp.message.register(sendmedia.get_media_group, Command(commands="mediagroup"))
+    dp.message.register(sendmedia.get_photo, Command(commands="photo"))
+    dp.message.register(sendmedia.get_sticker, Command(commands="sticker"))
+    dp.message.register(sendmedia.get_video, Command(commands="video"))
+    dp.message.register(sendmedia.get_video_note, Command(commands="video_note"))
+    dp.message.register(sendmedia.get_voice, Command(commands="voice"))
 
     dp.message.register(form.get_form, Command(commands="form"))
     dp.message.register(form.get_name, StepsForm.GET_NAME)

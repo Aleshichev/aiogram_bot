@@ -36,7 +36,7 @@ async def get_media_group(message: Message, bot: Bot):
 
 async def get_photo(message: Message, bot: Bot):
     photo = FSInputFile(f"{PATH}239422405.jpg")
-    await bot.send_photo(message.chat.id, photo, photo="New photo")
+    await bot.send_photo(message.chat.id, photo, caption="New photo")
 
 
 async def get_sticker(message: Message, bot: Bot):
@@ -45,18 +45,18 @@ async def get_sticker(message: Message, bot: Bot):
 
 
 async def get_video(message: Message, bot: Bot):
-    async with ChatActionSender.upload_video(chat_id=message.chat.id):
+    async with ChatActionSender.upload_video(bot=bot, chat_id=message.chat.id):
         video = FSInputFile(f"{PATH}videoplayback.mp4")
         await bot.send_video(message.chat.id, video)
 
 
 async def get_video_note(message: Message, bot: Bot):
-    async with ChatActionSender.upload_video_note(chat_id=message.chat.id):
+    async with ChatActionSender.upload_video_note(bot=bot, chat_id=message.chat.id):
         video_note = FSInputFile(f"{PATH}videoplayback.mp4")
         await bot.send_video_note(message.chat.id, video_note)
 
 
 async def get_voice(message: Message, bot: Bot):
-    async with ChatActionSender.record_video(message.chat.id):
+    async with ChatActionSender.record_video(bot=bot, chat_id=message.chat.id):
         voice = FSInputFile(f"{PATH}audio_sad.ogg")
         await bot.send_voice(message.chat.id, voice)
