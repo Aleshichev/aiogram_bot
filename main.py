@@ -40,6 +40,9 @@ from apscheduler.jobstores.redis import RedisJobStore
 
 from apscheduler_di import ContextSchedulerDecorator
 
+from aiogram.utils.chat_action import ChatActionMiddleware
+from core.middlewares.examplechatactionmiddleware import ExampleChatActionMiddleware
+
 import asyncpg
 
 
@@ -138,11 +141,12 @@ async def start():  # кнопка старт
     dp.message.middleware.register(CounterMiddleware())
     dp.message.middleware.register(OfficeHoursMiddleware())
     dp.update.middleware.register(SchedulerMiddleware(scheduler))
+    dp.message.middleware.register(ExampleChatActionMiddleware())
 
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
-    dp.message.register(sendmedia.get_audio, Command(commands="audio"))
+    dp.message.register(sendmedia.get_audio, Command(commands="audio"), flags={'typing': 'typing'})
     dp.message.register(sendmedia.get_document, Command(commands="document"))
     dp.message.register(sendmedia.get_media_group, Command(commands="mediagroup"))
     dp.message.register(sendmedia.get_photo, Command(commands="photo"))
