@@ -1,5 +1,6 @@
 from aiogram.types import Message, FSInputFile, InputMediaPhoto, InputMediaVideo
 from aiogram import Bot
+from aiogram.utils.chat_action import ChatActionSender
 
 
 PATH = "C:\\Users\\Ihor\\Documents\\itvdn\\projects\\Media\\"
@@ -41,3 +42,21 @@ async def get_photo(message: Message, bot: Bot):
 async def get_sticker(message: Message, bot: Bot):
     sticker = FSInputFile(f"{PATH}download.jfif")
     await bot.send_sticker(message.chat.id, sticker)
+
+
+async def get_video(message: Message, bot: Bot):
+    async with ChatActionSender.upload_video(chat_id=message.chat.id):
+        video = FSInputFile(f"{PATH}videoplayback.mp4")
+        await bot.send_video(message.chat.id, video)
+
+
+async def get_video_note(message: Message, bot: Bot):
+    async with ChatActionSender.upload_video_note(chat_id=message.chat.id):
+        video_note = FSInputFile(f"{PATH}videoplayback.mp4")
+        await bot.send_video_note(message.chat.id, video_note)
+
+
+async def get_voice(message: Message, bot: Bot):
+    async with ChatActionSender.record_video(message.chat.id):
+        voice = FSInputFile(f"{PATH}audio_sad.ogg")
+        await bot.send_voice(message.chat.id, voice)
