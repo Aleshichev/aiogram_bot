@@ -146,11 +146,27 @@ async def start():  # кнопка старт
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
-    dp.message.register(sendmedia.get_audio, Command(commands="audio"), flags={'typing': 'typing'})
-    dp.message.register(sendmedia.get_document, Command(commands="document"))
-    dp.message.register(sendmedia.get_media_group, Command(commands="mediagroup"))
-    dp.message.register(sendmedia.get_photo, Command(commands="photo"))
-    dp.message.register(sendmedia.get_sticker, Command(commands="sticker"))
+    dp.message.register(
+        sendmedia.get_audio,
+        Command(commands="audio"),
+        flags={"chat_action": "upload_document"},
+    )
+    dp.message.register(
+        sendmedia.get_document,
+        Command(commands="document"),
+        flags={"chat_action": "upload_document"},
+    )
+    dp.message.register(
+        sendmedia.get_media_group,
+        Command(commands="mediagroup"),
+        flags={"chat_action": "upload_photo"},
+    )
+    dp.message.register(
+        sendmedia.get_photo,
+        Command(commands="photo"),
+        flags={"chat_action": "upload_photo"},
+    )
+    dp.message.register(sendmedia.get_sticker, Command(commands="sticker"), flags={'chat_action': 'choose_sticker'})
     dp.message.register(sendmedia.get_video, Command(commands="video"))
     dp.message.register(sendmedia.get_video_note, Command(commands="video_note"))
     dp.message.register(sendmedia.get_voice, Command(commands="voice"))

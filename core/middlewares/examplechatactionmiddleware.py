@@ -12,11 +12,11 @@ class ExampleChatActionMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: Dict[str, Any],
     ) -> Any:
-        typing = get_flag(
-            data, "typing"
+        chat_action = get_flag(
+            data, "chat_action"
         )  # Check that handler marked with `typing` flag
-        if not typing:
+        if not chat_action:
             return await handler(event, data)
 
-        async with ChatActionSender.typing(bot=event.bot, chat_id=event.chat.id):
+        async with ChatActionSender(action=chat_action, bot=event.bot, chat_id=event.chat.id):
             return await handler(event, data)
